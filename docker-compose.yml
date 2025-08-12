@@ -52,9 +52,9 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - UI_PORT=${UI_PORT}
-      - API_PORT=${PORT}
-      - API_HOST=${APP_CONTAINER_NAME}
+      - UI_PORT: ${UI_PORT}
+      - API_PORT: ${PORT}
+      - API_HOST: ${APP_CONTAINER_NAME}
     ports:
       - "${UI_PORT}:${UI_PORT}"
     depends_on:
