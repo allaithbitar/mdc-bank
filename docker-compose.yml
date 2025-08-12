@@ -45,7 +45,7 @@ services:
     volumes:
       - medicine_bank_prod_db:/var/lib/postgresql/data
 
-    ui:
+  ui:
     container_name: ${UI_CONTAINER_NAME}
     env_file: .env
     build:
