@@ -51,7 +51,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
+    args:
       - UI_PORT: ${UI_PORT}
       - API_PORT: ${PORT}
       - API_HOST: ${APP_CONTAINER_NAME}
