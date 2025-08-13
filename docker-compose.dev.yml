@@ -3,7 +3,7 @@ services:
     container_name: ${APP_CONTAINER_NAME}
     env_file: .env
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile.dev
       args:
         POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -18,8 +18,8 @@ services:
     ports:
       - ${PORT}:${PORT}
     volumes:
-      - .:/app
-      - ./node_modules:/app/node_modules
+      - ./backend:/app
+      - ./backend/node_modules:/app/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,6 +50,26 @@ services:
       interval: 1s
       timeout: 5s
       retries: 10
+
+  ui:
+    container_name: ${UI_CONTAINER_NAME}
+    env_file: .env
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+      args:
+        UI_PORT: ${UI_PORT}
+        API_PORT: ${PORT}
+        API_HOST: localhost
+
+    volumes:
+      - ./frontend:/app
+      - ./frontend/node_modules:/app/node_modules
+    ports:
+      - ${UI_PORT}:${UI_PORT}
+    depends_on:
+      postgres:
+        condition: service_healthy
 
 volumes:
   medicine_bank_dev_db:
