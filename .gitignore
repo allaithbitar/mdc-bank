@@ -28,3 +28,9 @@ dev-dist
 .env.local
 .env.prod
 
+# SSL Certificates
+certs/
+*.pem
+*.key
+*.crt
+
