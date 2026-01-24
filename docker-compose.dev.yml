@@ -1,7 +1,7 @@
 services:
   app:
     container_name: ${APP_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.dev
     restart: unless-stopped
     build:
       context: ./backend
@@ -41,7 +41,7 @@ services:
 
   postgres:
     container_name: ${DB_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.dev
     image: postgres:14.5
     restart: unless-stopped
     environment:
@@ -65,14 +65,14 @@ services:
 
   ui:
     container_name: ${UI_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.dev
     build:
       context: ./frontend
       dockerfile: Dockerfile.dev
       args:
         UI_PORT: ${UI_PORT}
         API_PORT: ${PORT}
-        API_HOST: localhost
+        API_HOST: ${SERVER_NAME}
         USE_HTTPS: ${USE_HTTPS}
 
     volumes:
