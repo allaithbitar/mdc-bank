@@ -27,7 +27,11 @@ services:
         condition: service_healthy
         restart: true
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${PORT}/api/ping || wget --no-verbose --tries=1 --spider http://localhost:${PORT}/api/ping || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${PORT}/api/ping || wget --no-verbose --tries=1 --spider http://localhost:${PORT}/api/ping || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -65,7 +69,7 @@ services:
       args:
         UI_PORT: ${UI_PORT}
         API_PORT: ${PORT}
-        API_HOST: localhost
+        API_HOST: ${SERVER_NAME}
         USE_HTTPS: ${USE_HTTPS}
     environment:
       - SERVER_NAME=${SERVER_NAME}
@@ -81,7 +85,11 @@ services:
       app:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${UI_PORT}/ || exit 1"]
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${UI_PORT}/ || exit 1",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
