@@ -1,7 +1,7 @@
 services:
   app:
     container_name: ${APP_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.prod
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -15,18 +15,29 @@ services:
         JWT_TOKEN_EXPIRE: ${JWT_TOKEN_EXPIRE}
         JWT_REFRESH_TOKEN_EXPIRE: ${JWT_REFRESH_TOKEN_EXPIRE}
         PORT: ${PORT}
+        USE_HTTPS: ${USE_HTTPS}
+        SSL_CERT_PATH: ${SSL_CERT_PATH}
+        SSL_KEY_PATH: ${SSL_KEY_PATH}
+    volumes:
+      - ./certs:/app/certs:ro
     ports:
       - ${PORT}:${PORT}
     depends_on:
       postgres:
         condition: service_healthy
         restart: true
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${PORT}/api/ping || wget --no-verbose --tries=1 --spider http://localhost:${PORT}/api/ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     stdin_open: true
     tty: true
 
   postgres:
     container_name: ${DB_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.prod
     image: postgres:14.5
     restart: unless-stopped
     environment:
@@ -47,19 +58,34 @@ services:
 
   ui:
     container_name: ${UI_CONTAINER_NAME}
-    env_file: .env
+    env_file: .env.prod
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
         UI_PORT: ${UI_PORT}
         API_PORT: ${PORT}
-        API_HOST: ${APP_CONTAINER_NAME}
+        API_HOST: localhost
+        USE_HTTPS: ${USE_HTTPS}
+    environment:
+      - SERVER_NAME=${SERVER_NAME}
+      - UI_PORT=${UI_PORT}
+    volumes:
+      - ./certs:/etc/nginx/ssl:ro
     ports:
+      - "80:80"
       - "${UI_PORT}:${UI_PORT}"
     depends_on:
       postgres:
         condition: service_healthy
+      app:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider --no-check-certificate https://localhost:${UI_PORT}/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 volumes:
   medicine_bank_prod_db:
