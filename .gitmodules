@@ -1,6 +1,6 @@
 [submodule "backend"]
 	path = backend
-	url = https://github.com/allaithbitar/medicine-bank-backend
+	url = git@github.com:allaithbitar/medicine-bank-backend.git
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/allaithbitar/medicine-bank
+	url = git@github.com:allaithbitar/medicine-bank.git
