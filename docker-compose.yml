@@ -2,6 +2,7 @@ services:
   app:
     container_name: ${APP_CONTAINER_NAME}
     env_file: .env.prod
+    restart: unless-stopped
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -20,6 +21,7 @@ services:
         SSL_KEY_PATH: ${SSL_KEY_PATH}
     volumes:
       - ./certs:/app/certs:ro
+      - ./backend/public/audio:/app/public/audio
     ports:
       - ${PORT}:${PORT}
     depends_on:
@@ -63,6 +65,7 @@ services:
   ui:
     container_name: ${UI_CONTAINER_NAME}
     env_file: .env.prod
+    restart: unless-stopped
     build:
       context: ./frontend
       dockerfile: Dockerfile
